@@ -1,0 +1,205 @@
+package task1;
+
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeClass;
+
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.AfterClass;
+
+public class closeFdRdAccount {
+	WebDriver driver;
+	String url = "http://10.82.180.36/Common/Login.aspx";
+	@Test
+public void close_Fd_Rd() throws Exception
+  {
+	  
+	  //Clicking on close Fd Rd Account tab under Deposits
+	  driver.findElement(By.xpath("//*[@id=\"body_pnlCustomer_SubMenu\"]/div/div/ul/li[3]/a")).click();
+	  Thread.sleep(1000);
+	  
+	  //Using boolean to check if radio button is displayed using hard Assert
+	  boolean radio_button=driver.findElement(By.id("body_cph_Deposit_rbtnDepositType_0")).isDisplayed();
+	  Assert.assertEquals(radio_button, true,"Deposit type radio button is not displayed");
+	  
+	  //Using boolean to check if My deposit drop down is displayed using hard Assert
+	  boolean My_deposit=driver.findElement(By.id("body_cph_Deposit_ddlMyDeposits")).isDisplayed();
+	  Assert.assertEquals(My_deposit, true,"My deposits drop down is not displayed");
+	  
+	  //Using boolean to check if reset button is displayed using Hard Assertion
+	  boolean reset_button=driver.findElement(By.id("body_cph_Deposit_btnReset")).isDisplayed();
+	  Assert.assertEquals(reset_button, true,"Reset button is not displayed");
+	  
+	  boolean change_in_transfer=driver.findElement(By.id("body_cph_Deposit_chkNewTransfer")).isEnabled();
+	  Assert.assertEquals(change_in_transfer, false,"Change in transfer mode check box is enabled");
+	  
+	  boolean close_deposit=driver.findElement(By.id("body_cph_Deposit_btnClose")).isEnabled();
+	  Assert.assertEquals(close_deposit, false,"Close deposit button is enabled");
+	  
+	  	  
+	  
+	  //Using Excel Parameterization
+	  //Providing Excel sheet path as a string
+	  FileInputStream file=new FileInputStream(""C:\Users\parchuri.kumar\OneDrive - Infosys Limited\Desktop\Selenium_Accelerate\cap.xlsx"");
+	  //importing needed package to access the excel
+	  XSSFWorkbook workbook=new XSSFWorkbook(file);
+	  XSSFSheet sheet=workbook.getSheet("Sheet1");
+	  
+	  int noOfRow=sheet.getLastRowNum()-sheet.getFirstRowNum();
+	
+	  //Iterating through the sheet row and columns
+	  for(int i=1;i<=noOfRow;i++)
+	  {
+		//Getting all the sheet cell value
+		  String deposite_type=sheet.getRow(i).getCell(0).getStringCellValue();
+		  String my_deposite=sheet.getRow(i).getCell(1).getRawValue();
+		  String transfer_type=sheet.getRow(i).getCell(2).getStringCellValue();
+		  
+		  //Giving condition to select the particular Deposit type from the page and take input from sheet
+		  if(deposite_type.equals(driver.findElement(By.xpath("//*[@id=\"body_cph_Deposit_rbtnDepositType\"]/tbody/tr/td[1]/label")).getText()))
+		  {
+			  driver.findElement(By.id("body_cph_Deposit_rbtnDepositType_0")).click();
+		  }
+		  else if(deposite_type.equals(driver.findElement(By.xpath("//*[@id=\"body_cph_Deposit_rbtnDepositType\"]/tbody/tr/td[2]/label")).getText()))
+		  {
+			  driver.findElement(By.id("body_cph_Deposit_rbtnDepositType_1")).click();
+		  }
+		  Thread.sleep(1000);
+		  
+		  //Using Explicit wait to wait for a particular time to check the condition before throwing error
+		  WebDriverWait wait=new WebDriverWait(driver, 10);
+		  wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"body_cph_Deposit_ddlMyDeposits\"]")));
+		  
+		  WebElement dropdown=driver.findElement(By.id("body_cph_Deposit_ddlMyDeposits"));
+		  Select s=new Select(dropdown);
+		  s.selectByVisibleText(my_deposite);
+		  Thread.sleep(1000);
+		  
+		  //Printing the status of the account on console for user
+		  System.out.println(driver.findElement(By.id("body_cph_Deposit_lblStatusMessage")).getText());
+		  
+	
+		  
+		  //clicking on change in transfer Mode check box using id locator
+		  driver.findElement(By.id("body_cph_Deposit_chkNewTransfer")).click();
+		  
+		  	   
+	      //Using if condition to check Transfer Type of account is cash/cheque
+		  if(transfer_type.equals(driver.findElement(By.xpath("//*[@id=\"body_cph_Deposit_rbtnTransferType\"]/tbody/tr/td[1]/label")).getText()))
+		  {
+			  driver.findElement(By.id("body_cph_Deposit_rbtnTransferType_0")).click();
+			  Thread.sleep(1000);
+			  driver.findElement(By.id("body_cph_Deposit_btnClose")).click();
+			  Thread.sleep(1000);
+			  
+			  			  
+			  Thread.sleep(1000);
+			  driver.findElement(By.id("body_cph_Deposit_btnReset")).click();
+			  Thread.sleep(1000);
+		  }
+		  //Using if condition to check Transfer Type is Transfer to IEBI A/C
+		  else if(transfer_type.equals(driver.findElement(By.xpath("//*[@id=\"body_cph_Deposit_rbtnTransferType\"]/tbody/tr/td[2]/label")).getText()))
+		  {
+			  driver.findElement(By.id("body_cph_Deposit_rbtnTransferType_1")).click();
+			  Thread.sleep(1000);
+			  
+			  String type_Of_Account=sheet.getRow(i).getCell(3).getStringCellValue();
+			  String map_To_Accoun=sheet.getRow(i).getCell(4).getRawValue();
+			  
+			  //Using if condition to check the type of aacount
+			  if(type_Of_Account.equals(driver.findElement(By.xpath("//*[@id=\"body_cph_Deposit_rbtnAccountType\"]/tbody/tr/td[1]/label")).getText()))
+			  {
+				  driver.findElement(By.id("body_cph_Deposit_rbtnAccountType_0")).click();
+				  Thread.sleep(1000);
+			  }
+			  else if(type_Of_Account.equals(driver.findElement(By.xpath("")).getText()))
+			  {
+				  driver.findElement(By.id("body_cph_Deposit_rbtnAccountType_1")).click();
+				  Thread.sleep(1000);
+			  }
+			  WebElement we1=driver.findElement(By.id("body_cph_Deposit_ddlMapToAccount"));
+			  Select s1=new Select(we1);
+			  s1.selectByVisibleText(map_To_Accoun);
+			  Thread.sleep(2000);
+			  
+			  driver.findElement(By.id("body_cph_Deposit_btnClose")).click();
+			  Thread.sleep(1000);
+			  System.out.println("Transfer to IEBI A/C close deposite:-"+driver.findElement(By.id("body_cph_Deposit_lblMessages")).getText());
+			  driver.findElement(By.id("body_cph_Deposit_btnReset")).click();
+			  Thread.sleep(1000);
+		  }
+		  //Using if condition to check Transfer Type is Transfer to Other Bank A/C
+		  else if(transfer_type.equals(driver.findElement(By.xpath("//*[@id=\"body_cph_Deposit_rbtnTransferType\"]/tbody/tr/td[3]/label")).getText()))
+		  {
+			  driver.findElement(By.id("body_cph_Deposit_rbtnTransferType_2")).click();
+			  Thread.sleep(1000);
+			  
+			  String other_bak_ac_No=sheet.getRow(i).getCell(5).getRawValue();
+			  
+			  if(other_bak_ac_No==null)
+			  {
+				  driver.findElement(By.id("body_cph_Deposit_txtOtherBankAccountNumber")).sendKeys(" ");
+				  driver.findElement(By.id("body_cph_Deposit_btnClose")).click();
+				  
+				  driver.findElement(By.id("body_cph_Deposit_btnReset")).click();
+				  Thread.sleep(1000);
+			  }
+			//validiting the transfer to Other Bank A/C using different wrong account number and valid account number
+			  else if(other_bak_ac_No.length()>16)
+			  {
+				  
+				  System.out.println("Other Bank A/C Number should be a 16 digits");
+			  }
+			  else 
+			  {				 
+				  try {
+					  long other_bank_no1=Long.parseLong(other_bak_ac_No);
+					  driver.findElement(By.id("body_cph_Deposit_txtOtherBankAccountNumber")).sendKeys(""+other_bank_no1);
+					  Thread.sleep(1000);
+					  
+					  driver.findElement(By.id("body_cph_Deposit_btnClose")).click();
+					  Thread.sleep(1000);
+					  System.out.println("Transfer to Other Bank A/C after close deposite:-"+driver.findElement(By.id("body_cph_Deposit_lblMessages")).getText());
+					  
+				  }catch(Exception E)
+				  {
+					  System.out.println("Other Bank A/C Number should be integer");
+				  }
+			  }
+		  }
+		  
+	  }
+	  //closing the workbook
+	  workbook.close();
+	 
+	  
+  }
+
+    @BeforeClass
+  public void beforeClass() {
+	  System.setProperty("webdriver.chrome.driver","C:\\Users\\parchuri.kumar\\Desktop\\Selenium_Accelerate\\chromedriver.exe");
+	  driver = new ChromeDriver();
+	  driver.get(url);
+	  driver.manage().window().maximize();
+	  driver.manage().timeouts().implicitlyWait(10,TimeUnit.SECONDS);
+  }
+
+  @AfterClass
+  public void afterClass() {
+	  driver.close();
+	  
+  }
+
+}

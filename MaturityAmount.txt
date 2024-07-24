@@ -1,0 +1,128 @@
+package task1;
+
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeClass;
+
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.AfterClass;
+
+public class MaturityAmount {
+	WebDriver driver;
+	String url = "http://10.82.180.36/Common/Login.aspx";
+  @Test
+  public void maturity_Amount_Calculator() throws Exception
+  {
+	  //Entering the username and password manually
+	  driver.findElement(By.id("body_txtUserID")).sendKeys("donhere");
+	  driver.findElement(By.id("body_txtPassword")).sendKeys("don@123");
+	  Thread.sleep(1000);
+	  driver.findElement(By.id("body_btnLogin")).click();
+	  Thread.sleep(1000);  
+	  
+	  //Clicking on deposit after login
+	  driver.findElement(By.partialLinkText("Deposit")).click();
+	  Thread.sleep(1000);
+	  
+	  //Location the webElement using Xpath
+	  WebElement hover=driver.findElement(By.xpath("//*[@id=\"body_pnlCustomer_SubMenu\"]/div/div/ul/li[2]/a"));
+	  
+	  Actions a=new Actions(driver);
+	  //Using Mousehover to click
+	  a.moveToElement(hover).click().build().perform();
+	  Thread.sleep(1000);
+	  
+	   	  
+  	  //Using the hard assertion to check if the Deposit Types button is enabled
+  	  boolean is_enabled=driver.findElement(By.id("body_cph_Deposit_rbtnDepositType_0")).isEnabled();
+  	  Assert.assertEquals(is_enabled, true);
+  	  Thread.sleep(1000);
+  	  driver.findElement(By.id("body_cph_Deposit_rbtnDepositType_0")).click();
+  	  Thread.sleep(2000);
+	  driver.findElement(By.id("body_cph_Deposit_txtDepositAmount")).sendKeys("1000000");
+	  Thread.sleep(2000);
+	  driver.findElement(By.id("body_cph_Deposit_txtTerms")).sendKeys("3");
+	  Thread.sleep(2000);
+	  driver.findElement(By.id("body_cph_Deposit_btnCalculate")).click();
+	  
+	    	  
+  	  //Clicking on reset button to reset the page
+  	  driver.findElement(By.id("body_cph_Deposit_btnReset")).click();
+  	  Thread.sleep(2000);
+  	  driver.findElement(By.id("body_cph_Deposit_txtDepositAmount")).sendKeys("1000000");
+  	  Thread.sleep(2000);
+	  driver.findElement(By.id("body_cph_Deposit_txtTerms")).sendKeys("3");
+	  Thread.sleep(2000);
+	  driver.findElement(By.id("body_cph_Deposit_btnCalculate")).click();
+	  Thread.sleep(1000);
+	    	  
+  	  //Clicking on reset button to reset the page
+	  driver.findElement(By.id("body_cph_Deposit_btnReset")).click();
+	  Thread.sleep(2000);
+  	 
+  	  driver.findElement(By.id("body_cph_Deposit_rbtnDepositType_0")).click();
+  	  Thread.sleep(2000);
+	  driver.findElement(By.id("body_cph_Deposit_txtDepositAmount")).sendKeys("9000");
+	  Thread.sleep(2000);
+	  driver.findElement(By.id("body_cph_Deposit_txtTerms")).sendKeys("3");
+	  Thread.sleep(2000);
+	  driver.findElement(By.id("body_cph_Deposit_btnCalculate")).click();
+	  Thread.sleep(2000);
+	  
+  	  driver.findElement(By.id("body_cph_Deposit_btnReset")).click();
+  	  Thread.sleep(2000);
+  	  
+  	  //Clicking on deposit type and entering amount and terms to calculate maturity
+  	  driver.findElement(By.id("body_cph_Deposit_rbtnDepositType_1")).click();
+  	  Thread.sleep(2000);
+	  driver.findElement(By.id("body_cph_Deposit_txtDepositAmount")).sendKeys("700");
+	  Thread.sleep(2000);
+	  driver.findElement(By.id("body_cph_Deposit_txtTerms")).sendKeys("3");
+	  Thread.sleep(2000);
+	  driver.findElement(By.id("body_cph_Deposit_btnCalculate")).click();
+	  Thread.sleep(1000);
+	  
+	 
+	  driver.findElement(By.id("body_cph_Deposit_btnReset")).click();
+	  Thread.sleep(2000);
+	  
+	  //for terms grether than 24
+	  driver.findElement(By.id("body_cph_Deposit_rbtnDepositType_1")).click();
+	  Thread.sleep(2000);
+	  driver.findElement(By.id("body_cph_Deposit_txtDepositAmount")).sendKeys("9000");
+	  Thread.sleep(2000);
+	  driver.findElement(By.id("body_cph_Deposit_txtTerms")).sendKeys("27");
+	  Thread.sleep(2000);
+	  driver.findElement(By.id("body_cph_Deposit_btnCalculate")).click();
+	  Thread.sleep(1000);
+	  
+	    
+  } 
+  @BeforeClass
+  public void beforeClass() {
+	  System.setProperty("webdriver.chrome.driver","C:\\Users\\parchuri.kumar\\Desktop\\Selenium_Accelerate\\chromedriver.exe");
+	  driver = new ChromeDriver();
+	  driver.get(url);
+	  driver.manage().window().maximize();
+	  driver.manage().timeouts().implicitlyWait(10,TimeUnit.SECONDS);
+  }
+
+  @AfterClass
+  public void afterClass() {
+	  driver.close();
+	  
+  }
+
+}
